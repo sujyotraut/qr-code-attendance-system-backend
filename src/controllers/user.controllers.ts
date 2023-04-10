@@ -1,25 +1,71 @@
 import { PrismaClient } from '@prisma/client';
-import { Request, Response } from 'express';
-import APIResponse from '../types/APIResponse.types';
+import { Request } from 'express';
+import { body, matchedData } from 'express-validator';
+import APIResponse from '../types/APIResponse';
+import ParamsWithID from '../types/ParamsWithID';
+import UserFilter from '../types/UserFilter';
+import NotFoundError from '../utils/NotFoundError';
 
 const prisma = new PrismaClient();
 
-export function getUsers(req: Request, res: Response<APIResponse>) {
-  res.status(501).json({ status: 'fail', message: 'Route not implemented' });
+export async function getUsers(req: Request<any, any, any, UserFilter>, res: APIResponse) {
+  const { _limit, _skip, _sort, _order } = matchedData(req, { locations: ['query'] });
+
+  const query = req.query;
+  const total = await prisma.user.count();
+
+  const users = await prisma.user.findMany({
+    skip: _skip,
+    take: _limit,
+    orderBy: { [_sort]: _order },
+    where: {
+      AND: [
+        { id: { contains: query.id } },
+        { email: { contains: query.email } },
+        { username: { contains: query.username } },
+        { role: { contains: query.role } },
+      ],
+    },
+  });
+
+  // Exclude password field from users
+  const items = users.map((user) => {
+    const { password, ...rest } = user;
+    return rest;
+  });
+
+  res.json({ status: 'success', data: { total, items } });
 }
 
-export function createUser(req: Request, res: Response<APIResponse>) {
-  res.status(501).json({ status: 'fail', message: 'Route not implemented' });
+export async function createUser(req: Request, res: APIResponse) {
+  const userData = matchedData(req, { locations: ['body'] }) as any;
+  const user = await prisma.user.create({ data: userData });
+  res.status(201).json({ status: 'success', data: user });
 }
 
-export function getUser(req: Request, res: Response<APIResponse>) {
-  res.status(501).json({ status: 'fail', message: 'Route not implemented' });
+export async function getUser(req: Request<ParamsWithID>, res: APIResponse) {
+  const user = await prisma.user.findUnique({ where: { id: req.params.id } });
+  if (!user) throw new NotFoundError(`User with id: ${req.params.id} not found`);
+  const { password, ...data } = user;
+  res.json({ status: 'success', data });
 }
 
-export function updateUser(req: Request, res: Response<APIResponse>) {
-  res.status(501).json({ status: 'fail', message: 'Route not implemented' });
+export async function updateUser(req: Request<ParamsWithID>, res: APIResponse) {
+  const userData = matchedData(req, { locations: ['body'] }) as any;
+  const user = await prisma.user.update({ where: { id: req.params.id }, data: userData });
+  res.json({ status: 'success', data: user });
 }
 
-export function deleteUser(req: Request, res: Response<APIResponse>) {
-  res.status(501).json({ status: 'fail', message: 'Route not implemented' });
+export async function deleteUser(req: Request<ParamsWithID>, res: APIResponse) {
+  await prisma.user.delete({ where: { id: req.params.id } });
+  res.json({ status: 'success', data: {} });
+}
+
+export function validateUser() {
+  return [
+    body('email').exists({ checkNull: true, checkFalsy: true }).isEmail(),
+    body('username').exists({ checkNull: true, checkFalsy: true }).isString(),
+    body('password').exists({ checkNull: true, checkFalsy: true }).isStrongPassword(),
+    body('role').custom((value) => ['admin', 'student', 'teacher'].includes(value)),
+  ];
 }

@@ -6,7 +6,8 @@
   "scripts": {
     "start": "ts-node src/index.ts",
     "dev": "ts-node-dev src/index.ts",
-    "db:reset": "prisma db push --force-reset"
+    "db:reset": "prisma db push --force-reset",
+    "db:seed": "yarn db:reset && ts-node prisma/seed.ts"
   },
   "dependencies": {
     "@prisma/client": "^4.11.0",
@@ -16,6 +17,7 @@
     "express-validator": "^6.15.0"
   },
   "devDependencies": {
+    "@faker-js/faker": "^7.6.0",
     "@types/cors": "^2.8.13",
     "@types/express": "^4.17.15",
     "dotenv": "^16.0.3",

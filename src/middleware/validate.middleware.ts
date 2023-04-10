@@ -1,8 +1,8 @@
-import { NextFunction, Request, Response } from 'express';
+import { NextFunction, Request } from 'express';
 import { validationResult } from 'express-validator';
-import APIResponse from '../types/APIResponse.types';
+import APIResponse from '../types/APIResponse';
 
-function validate(req: Request, res: Response<APIResponse>, next: NextFunction) {
+function validate(req: Request, res: APIResponse, next: NextFunction) {
   const errors = validationResult(req);
   if (errors.isEmpty()) return next();
   const firstError = errors.array()[0];
