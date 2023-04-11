@@ -1,10 +1,10 @@
 import { PrismaClient } from '@prisma/client';
 import { Request } from 'express';
 import { body, matchedData } from 'express-validator';
+import validate from '../middleware/validate.middleware';
 import APIResponse from '../types/APIResponse';
 import ParamsWithID from '../types/ParamsWithID';
 import UserFilter from '../types/UserFilter';
-import NotFoundError from '../utils/NotFoundError';
 
 const prisma = new PrismaClient();
 
@@ -44,8 +44,7 @@ export async function createUser(req: Request, res: APIResponse) {
 }
 
 export async function getUser(req: Request<ParamsWithID>, res: APIResponse) {
-  const user = await prisma.user.findUnique({ where: { id: req.params.id } });
-  if (!user) throw new NotFoundError(`User with id: ${req.params.id} not found`);
+  const user = await prisma.user.findUniqueOrThrow({ where: { id: req.params.id } });
   const { password, ...data } = user;
   res.json({ status: 'success', data });
 }
@@ -67,5 +66,6 @@ export function validateUser() {
     body('username').exists({ checkNull: true, checkFalsy: true }).isString(),
     body('password').exists({ checkNull: true, checkFalsy: true }).isStrongPassword(),
     body('role').custom((value) => ['admin', 'student', 'teacher'].includes(value)),
+    validate,
   ];
 }
