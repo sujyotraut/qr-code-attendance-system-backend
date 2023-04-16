@@ -4,7 +4,6 @@ import {
   PrismaClientValidationError,
 } from '@prisma/client/runtime/library';
 import { NextFunction, Request } from 'express';
-import { UnauthorizedError } from 'express-oauth2-jwt-bearer';
 import APIResponse from '../types/APIResponse';
 import ApplicationError from '../utils/ApplicationError';
 
@@ -14,14 +13,13 @@ In Express 5 we no longer need to pass error to next function,
 Unhandled promise rejections are automatically passed to error handler.
 */
 function errorHandler(err: any, req: Request, res: APIResponse, next: NextFunction) {
-  if (err instanceof UnauthorizedError) {
-    res.status(401).json({ status: 'fail', message: 'Unauthorized' });
-  } else if (err instanceof ApplicationError) {
-    res.status(err.status).json({ status: 'fail', message: err.message });
+  if (err instanceof ApplicationError) {
+    res.status(err.statusCode).json({ status: 'fail', message: err.message });
   } else if (err instanceof PrismaClientKnownRequestError) {
     switch (err.code) {
       case 'P2002':
-        const field: string | undefined = (err.meta?.target as string[])[0];
+        const fields = err.meta?.target as string[];
+        const field: string | undefined = fields[fields.length - 1];
         res.status(400).json({ status: 'fail', message: `Field '${field}' should be unique` });
         break;
       case 'P2025':

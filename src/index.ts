@@ -1,6 +1,8 @@
 import cors from 'cors';
 import dotenv from 'dotenv';
 import express from 'express';
+import helmet from 'helmet';
+import morgan from 'morgan';
 import errorHandler from './middleware/error.middleware';
 import attendanceRouter from './routes/attendance.routes';
 import authRouter from './routes/auth.routes';
@@ -18,6 +20,8 @@ const port = process.env.PORT || 4000;
 
 // Middleware
 app.use(cors());
+app.use(helmet());
+app.use(morgan('tiny'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
@@ -36,7 +40,7 @@ app.use('/attendances', attendanceRouter);
 
 // Not found route
 // In Express 5 `(*)` is no longer valid and must be written as `(.*)`
-app.get('(.*)', (req, res: APIResponse) => {
+app.all('(.*)', (req, res: APIResponse) => {
   res.status(404).json({ status: 'fail', message: 'Not Found' });
 });
 

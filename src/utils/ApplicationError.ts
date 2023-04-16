@@ -1,15 +1,12 @@
 class ApplicationError extends Error {
-  status: number = 500;
-  message: string = 'An unexpected error occurred';
-
-  constructor(message: string, status: number) {
+  statusCode: number = 500;
+  constructor(message: string, statusCode?: number) {
     super(message);
 
     Error.captureStackTrace(this, this.constructor);
 
     this.name = this.constructor.name;
-    this.message = message || this.message;
-    this.status = status || this.status;
+    this.statusCode = statusCode || this.statusCode;
   }
 }
 

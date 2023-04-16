@@ -1,9 +1,16 @@
 import express from 'express';
-import { loginStudent, registerStudent } from '../controllers/auth.controllers';
+import {
+  loginAdmin,
+  loginStudent,
+  registerStudent,
+  validateLoginCredentials,
+  validateStudentRegisterCredentials,
+} from '../controllers/auth.controllers';
 
 const authRouter = express.Router();
 
-authRouter.post('/login-student', loginStudent);
-authRouter.post('/register-student', registerStudent);
+authRouter.post('/login-admin', validateLoginCredentials(), loginAdmin);
+authRouter.post('/login-student', validateLoginCredentials(), loginStudent);
+authRouter.post('/register-student', validateStudentRegisterCredentials(), registerStudent);
 
 export default authRouter;

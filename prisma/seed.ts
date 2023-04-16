@@ -8,7 +8,7 @@ const prisma = new PrismaClient();
   await prisma.user.create({
     data: {
       id: 'admin',
-      email: 'admin@gmail.com',
+      email: 'admin@attendance.com',
       username: 'admin',
       password: 'admin',
       role: 'admin',
@@ -17,20 +17,9 @@ const prisma = new PrismaClient();
 
   await createUsers(50);
 
-  const users = await prisma.user.findMany();
-
-  console.log(users);
-  console.log(`total: ${users.length}`);
+  const totalUsers = await prisma.user.count();
+  console.log(`Total ${totalUsers} users add to the database`);
 })();
-
-async function getUsers(_limit: number = 10, _skip: number = 0, _sort: string = 'id', _order: string = 'asc') {
-  return await prisma.user.findMany({
-    skip: Math.abs(Number(_skip)),
-    take: Math.abs(Number(_limit)),
-    orderBy: { [_sort]: _order },
-    where: {},
-  });
-}
 
 async function createUsers(noOfUsers: number) {
   for (let i = 0; i < noOfUsers; i++) {
@@ -39,16 +28,23 @@ async function createUsers(noOfUsers: number) {
 }
 
 async function createUser(index: number, noOfUsers: number) {
-  const newIndex = index.toString().padStart(noOfUsers.toString().length, '0');
+  const id = index.toString().padStart(noOfUsers.toString().length, '0');
+  const email = faker.internet.email();
+  const username = faker.internet.userName();
+  const password = faker.internet.password();
   const roles = ['admin', 'student', 'teacher'];
+  const role = roles[Math.floor(Math.random() * roles.length)];
 
-  return await prisma.user.create({
+  const user = await prisma.user.create({
     data: {
-      id: newIndex,
-      email: faker.internet.email(),
-      username: faker.internet.userName(),
-      password: faker.internet.password(),
-      role: roles[Math.floor(Math.random() * roles.length)],
+      id,
+      email,
+      username,
+      password,
+      role,
     },
   });
+
+  console.log(`User with id: '${id}' added to the database`);
+  return user;
 }
