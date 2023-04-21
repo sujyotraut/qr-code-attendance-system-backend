@@ -26,7 +26,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 // Base route
-app.get('/', (req, res: APIResponse) => {
+app.get('/', (_, res: APIResponse) => {
   res.status(200).json({ status: 'success', data: 'Server is up & running...' });
 });
 
@@ -40,7 +40,7 @@ app.use('/attendances', attendanceRouter);
 
 // Not found route
 // In Express 5 `(*)` is no longer valid and must be written as `(.*)`
-app.all('(.*)', (req, res: APIResponse) => {
+app.all('(.*)', (_, res: APIResponse) => {
   res.status(404).json({ status: 'fail', message: 'Not Found' });
 });
 

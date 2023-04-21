@@ -21,6 +21,7 @@ export async function getUsers(req: Request<any, any, any, UserFilter>, res: API
     where: {
       AND: [
         { id: { contains: query.id } },
+        { name: { contains: query.name } },
         { email: { contains: query.email } },
         { username: { contains: query.username } },
         { role: { contains: query.role } },
@@ -39,20 +40,19 @@ export async function getUsers(req: Request<any, any, any, UserFilter>, res: API
 
 export async function createUser(req: Request, res: APIResponse) {
   const userData = matchedData(req, { locations: ['body'] }) as any;
-  const user = await prisma.user.create({ data: userData });
-  res.status(201).json({ status: 'success', data: user });
+  const { password, ...data } = await prisma.user.create({ data: { ...userData, role: 'admin' } });
+  res.status(201).json({ status: 'success', data });
 }
 
 export async function getUser(req: Request<ParamsWithID>, res: APIResponse) {
-  const user = await prisma.user.findUniqueOrThrow({ where: { id: req.params.id } });
-  const { password, ...data } = user;
+  const { password, ...data } = await prisma.user.findUniqueOrThrow({ where: { id: req.params.id } });
   res.json({ status: 'success', data });
 }
 
 export async function updateUser(req: Request<ParamsWithID>, res: APIResponse) {
   const userData = matchedData(req, { locations: ['body'] }) as any;
-  const user = await prisma.user.update({ where: { id: req.params.id }, data: userData });
-  res.json({ status: 'success', data: user });
+  const data = await prisma.user.update({ where: { id: req.params.id }, data: { ...userData, role: 'admin' } });
+  res.json({ status: 'success', data });
 }
 
 export async function deleteUser(req: Request<ParamsWithID>, res: APIResponse) {
@@ -60,12 +60,20 @@ export async function deleteUser(req: Request<ParamsWithID>, res: APIResponse) {
   res.json({ status: 'success', data: {} });
 }
 
-export function validateUser() {
-  return [
-    body('email').exists({ checkNull: true, checkFalsy: true }).isEmail(),
-    body('username').exists({ checkNull: true, checkFalsy: true }).isString(),
-    body('password').exists({ checkNull: true, checkFalsy: true }).isStrongPassword(),
-    body('role').custom((value) => ['admin', 'student', 'teacher'].includes(value)),
-    validate,
-  ];
-}
+// export function validateUser() {
+//   return [
+//     body('name').exists({ checkNull: true, checkFalsy: true }).isString(),
+//     body('email').exists({ checkNull: true, checkFalsy: true }).isEmail(),
+//     body('username').exists({ checkNull: true, checkFalsy: true }).isString(),
+//     body('password').exists({ checkNull: true, checkFalsy: true }).isStrongPassword(),
+//     validate,
+//   ];
+// }
+
+export const validateUser = [
+  body('name').exists({ checkNull: true, checkFalsy: true }).isString(),
+  body('email').exists({ checkNull: true, checkFalsy: true }).isEmail(),
+  body('username').exists({ checkNull: true, checkFalsy: true }).isString(),
+  body('password').exists({ checkNull: true, checkFalsy: true }).isStrongPassword(),
+  validate,
+];
