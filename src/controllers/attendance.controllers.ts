@@ -1,12 +1,31 @@
 import { PrismaClient } from '@prisma/client';
 import { Request } from 'express';
-import { body, matchedData } from 'express-validator';
+import { matchedData } from 'express-validator';
 import validate from '../middleware/validate.middleware';
 import APIResponse from '../types/APIResponse';
 import AttendanceFilter from '../types/AttendanceFilter';
 import ParamsWithID from '../types/ParamsWithID';
+import UserLocals from '../types/UserLocals';
 
 const prisma = new PrismaClient();
+
+export async function markAttendance(req: Request<{ lectureId: string }>, res: APIResponse<UserLocals>) {
+  const attendance = await prisma.attendance.upsert({
+    where: { id: req.params.lectureId },
+    create: {
+      present: true,
+      lecture: { connect: { id: req.params.lectureId } },
+      student: { connect: { id: res.locals.user.id } },
+    },
+    update: {
+      present: true,
+      lecture: { connect: { id: req.params.lectureId } },
+      student: { connect: { id: res.locals.user.id } },
+    },
+  });
+
+  res.json({ status: 'success', data: attendance });
+}
 
 export async function getAttendances(req: Request<any, any, any, AttendanceFilter>, res: APIResponse) {
   const { _limit, _skip, _sort, _order } = matchedData(req, { locations: ['query'] });

@@ -47,5 +47,16 @@ app.all('(.*)', (_, res: APIResponse) => {
 // Error handler
 app.use(errorHandler);
 
-// Server
-app.listen(port, () => console.log(`Server is listening on port ${port}`));
+// HTTP server
+app.listen(port, () => console.log(`HTTP server is listening on port ${port}`));
+
+// // HTTPs server option
+// const options: https.ServerOptions = {
+//   key: fs.readFileSync(`${__dirname}/config/cert.key`, 'utf-8'),
+//   cert: fs.readFileSync(`${__dirname}/config/cert.crt`, 'utf-8'),
+// };
+
+// // HTTPs server
+// https.createServer(options, app).listen(8080, () => {
+//   console.log(`HTTPS server is listening on port 8080`);
+// });

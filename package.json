@@ -16,6 +16,7 @@
     "express-validator": "^6.15.0",
     "helmet": "^6.1.5",
     "jsonwebtoken": "^9.0.0",
+    "mkcert": "^1.5.1",
     "morgan": "^1.10.0"
   },
   "devDependencies": {

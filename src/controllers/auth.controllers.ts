@@ -4,9 +4,24 @@ import { body, matchedData } from 'express-validator';
 import jwt from 'jsonwebtoken';
 import validate from '../middleware/validate.middleware';
 import APIResponse from '../types/APIResponse';
+import UserLocals from '../types/UserLocals';
 import ApplicationError from '../utils/ApplicationError';
 
 const prisma = new PrismaClient();
+
+export async function getUser(req: Request, res: APIResponse<UserLocals>) {
+  const { password, ...user } = await prisma.user.findUniqueOrThrow({ where: { id: res.locals.user.id } });
+  res.json({ status: 'success', data: user });
+}
+
+export async function getStudent(req: Request, res: APIResponse<UserLocals>) {
+  const { username, password, student, ...user } = await prisma.user.findUniqueOrThrow({
+    where: { id: res.locals.user.id },
+    include: { student: true },
+  });
+
+  res.json({ status: 'success', data: { ...user, ...student } });
+}
 
 export async function loginAdmin(req: Request, res: APIResponse) {
   // Get login credentials from request body

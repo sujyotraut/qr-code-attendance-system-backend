@@ -43,6 +43,7 @@ export async function createLecture(req: Request, res: APIResponse<UserLocals>) 
     data: { ...lectureData, teacher: { connect: { id: res.locals.user.id } } },
   });
 
+  res.setHeader('Location', `/attendances/mark/${lecture.id}`);
   res.status(201).json({ status: 'success', data: lecture });
 }
 

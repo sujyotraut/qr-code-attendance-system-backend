@@ -1,6 +1,5 @@
 import express from 'express';
 import { createUser, deleteUser, getUser, getUsers, updateUser, validateUser } from '../controllers/user.controllers';
-import { requireAdmin } from '../middleware/auth.middleware';
 import pagination from '../middleware/pagination.middleware';
 import sorting from '../middleware/sorting.middleware';
 
