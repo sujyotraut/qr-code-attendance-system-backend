@@ -46,17 +46,17 @@ export async function loginTeacher(req: Request, res: APIResponse) {
   const { username, password } = matchedData(req, { locations: ['body'] });
 
   // Retrieve user from database if doesn't exist return null
-  const userOrNull = await prisma.user.findUnique({ where: { username: username } });
+  const userOrNull = await prisma.user.findUnique({ where: { username: username }, include: { teacher: true } });
 
   // Throw invalid credentials error if user doesn't exist or role & password doesn't match
   if (!userOrNull || userOrNull.role !== 'teacher' || userOrNull.password !== password)
     throw new ApplicationError('Invalid username or password', 400);
 
   // Remove password from user & sign jwt with user as payload
-  const { password: _, ...user } = userOrNull;
+  const { password: _, teacher, ...user } = userOrNull;
   const token = jwt.sign(user, process.env.JWT_SECRET!);
 
-  res.json({ status: 'success', data: { user, token } });
+  res.json({ status: 'success', data: { user, teacher, token } });
 }
 
 export async function loginStudent(req: Request, res: APIResponse) {
@@ -64,17 +64,17 @@ export async function loginStudent(req: Request, res: APIResponse) {
   const { username, password } = matchedData(req, { locations: ['body'] });
 
   // Retrieve user from database if doesn't exist return null
-  const userOrNull = await prisma.user.findUnique({ where: { username: username } });
+  const userOrNull = await prisma.user.findUnique({ where: { username: username }, include: { student: true } });
 
   // Throw invalid credentials error if user doesn't exist or role & password doesn't match
   if (!userOrNull || userOrNull.role !== 'student' || userOrNull.password !== password)
     throw new ApplicationError('Invalid username or password', 400);
 
   // Remove password from user & sign jwt with user as payload
-  const { password: _, ...user } = userOrNull;
+  const { password: _, student, ...user } = userOrNull;
   const token = jwt.sign(user, process.env.JWT_SECRET!);
 
-  res.json({ status: 'success', data: { user, token } });
+  res.json({ status: 'success', data: { user, student, token } });
 }
 
 export async function registerStudent(req: Request, res: APIResponse) {
