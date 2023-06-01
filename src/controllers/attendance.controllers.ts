@@ -14,7 +14,7 @@ export async function markAttendance(req: Request<{ lectureId: string }>, res: A
   const studentId = res.locals.user.id;
 
   const attendance = await prisma.attendance.upsert({
-    where: { lectureId_studentId: { lectureId, studentId } },
+    where: { attendanceId: { lectureId, studentId } },
     create: {
       present: true,
       lecture: { connect: { id: lectureId } },

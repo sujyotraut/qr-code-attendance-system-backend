@@ -66,5 +66,5 @@ model Attendance {
   studentId String
   student   Student @relation(fields: [studentId], references: [id])
 
-  @@unique(fields: [lectureId, studentId])
+  @@unique(fields: [lectureId, studentId], name: "attendanceId")
 }
