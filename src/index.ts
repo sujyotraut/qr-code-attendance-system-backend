@@ -1,5 +1,4 @@
 import cors from 'cors';
-// import dotenv from 'dotenv';
 import express from 'express';
 import helmet from 'helmet';
 import morgan from 'morgan';
@@ -13,7 +12,6 @@ import userRouter from './routes/user.routes';
 import APIResponse from './types/APIResponse';
 
 // Load environment variable form .env file
-// dotenv.config();
 if (process.env.NODE_ENV === 'development') require('dotenv').config();
 
 const app = express();

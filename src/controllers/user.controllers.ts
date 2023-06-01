@@ -60,16 +60,6 @@ export async function deleteUser(req: Request<ParamsWithID>, res: APIResponse) {
   res.json({ status: 'success', data: {} });
 }
 
-// export function validateUser() {
-//   return [
-//     body('name').exists({ checkNull: true, checkFalsy: true }).isString(),
-//     body('email').exists({ checkNull: true, checkFalsy: true }).isEmail(),
-//     body('username').exists({ checkNull: true, checkFalsy: true }).isString(),
-//     body('password').exists({ checkNull: true, checkFalsy: true }).isStrongPassword(),
-//     validate,
-//   ];
-// }
-
 export const validateUser = [
   body('name').exists({ checkNull: true, checkFalsy: true }).isString(),
   body('email').exists({ checkNull: true, checkFalsy: true }).isEmail(),
