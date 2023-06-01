@@ -10,17 +10,20 @@ import UserLocals from '../types/UserLocals';
 const prisma = new PrismaClient();
 
 export async function markAttendance(req: Request<{ lectureId: string }>, res: APIResponse<UserLocals>) {
+  const lectureId = req.params.lectureId;
+  const studentId = res.locals.user.id;
+
   const attendance = await prisma.attendance.upsert({
-    where: { id: req.params.lectureId },
+    where: { lectureId_studentId: { lectureId, studentId } },
     create: {
       present: true,
-      lecture: { connect: { id: req.params.lectureId } },
-      student: { connect: { id: res.locals.user.id } },
+      lecture: { connect: { id: lectureId } },
+      student: { connect: { id: studentId } },
     },
     update: {
       present: true,
-      lecture: { connect: { id: req.params.lectureId } },
-      student: { connect: { id: res.locals.user.id } },
+      lecture: { connect: { id: lectureId } },
+      student: { connect: { id: studentId } },
     },
   });
 
