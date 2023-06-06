@@ -37,6 +37,7 @@ model Student {
   semester    String
   branch      String
   attendances Attendance[]
+  deviceId    String?      @unique
   user        User         @relation(fields: [id], references: [id], onDelete: Cascade)
 
   @@unique([course, year, semester, branch, rollNo])

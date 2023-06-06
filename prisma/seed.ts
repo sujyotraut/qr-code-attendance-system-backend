@@ -4,7 +4,7 @@ import { Attendance, Lecture, PrismaClient, Student, Teacher, User } from '@pris
 const prisma = new PrismaClient();
 
 type UserData = Omit<User, 'id'>;
-type StudentData = Omit<Student, 'id'> & { name: string; email: string };
+type StudentData = Omit<Student, 'id' | 'deviceId'> & { name: string; email: string };
 type TeacherData = Omit<Teacher, 'id'> & { name: string; email: string };
 type LectureData = Omit<Lecture, 'id'>;
 type AttendanceData = Omit<Attendance, 'id'>;
