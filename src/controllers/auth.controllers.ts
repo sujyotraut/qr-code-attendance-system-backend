@@ -77,7 +77,7 @@ export async function loginStudent(req: Request, res: APIResponse) {
     where: { deviceId: deviceId },
   });
 
-  if (deviceAlreadyInUse && deviceAlreadyInUse.id === userOrNull.id)
+  if (deviceAlreadyInUse && deviceAlreadyInUse.id !== userOrNull.id)
     throw new ApplicationError('Device is already associated with another student account', 400);
   else if (deviceIdAssociatedWithStudent === null)
     await prisma.student.update({ where: { id: userOrNull.id }, data: { deviceId: deviceId } });
