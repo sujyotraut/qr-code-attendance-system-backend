@@ -4,9 +4,8 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "start": "node src/index.js",
+    "start": "ts-node-dev src/index.ts",
     "dev": "set NODE_ENV=development && ts-node-dev src/index.ts",
-    "build": "tsc",
     "db:reset": "prisma db push --force-reset",
     "db:seed": "yarn db:reset && ts-node prisma/seed.ts"
   },
