@@ -33,6 +33,28 @@ type AttendanceData = Omit<Attendance, 'id'>;
     },
   });
 
+  await prisma.user.create({
+    data: {
+      name: 'Prajwal Bhure',
+      email: 'prajwalphure@attendance.com',
+      username: 'prajwal-bhure',
+      password: 'Prajwal@2309',
+      role: 'teacher',
+      teacher: { create: {} },
+    },
+  });
+
+  await prisma.user.create({
+    data: {
+      name: 'Parag Barye',
+      email: 'paragbarye@attendance.com',
+      username: 'parag-barye',
+      password: 'Parag@1307',
+      role: 'teacher',
+      teacher: { create: {} },
+    },
+  });
+
   // Create students
   await createStudents();
 
