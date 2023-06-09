@@ -18,7 +18,7 @@ attendanceRouter.post('/mark/:lectureId', requireStudent, markAttendance);
 attendanceRouter.get('/', sorting('Attendance'), pagination(), getAttendances);
 attendanceRouter.post('/', validateAttendance, createAttendance);
 attendanceRouter.get('/:id', getAttendance);
-attendanceRouter.put('/:id', validateAttendance, updateAttendance);
+attendanceRouter.put('/:id', updateAttendance);
 attendanceRouter.delete('/:id', deleteAttendance);
 
 export default attendanceRouter;

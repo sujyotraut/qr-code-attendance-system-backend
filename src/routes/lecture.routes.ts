@@ -3,6 +3,7 @@ import {
   createLecture,
   deleteLecture,
   getLecture,
+  getLectureAttendances,
   getLectures,
   updateLecture,
   validateLecture,
@@ -13,7 +14,8 @@ import sorting from '../middleware/sorting.middleware';
 
 const lectureRouter = express.Router();
 
-lectureRouter.get('/', sorting('Lecture'), pagination(), getLectures);
+lectureRouter.get('/', requireTeacher, sorting('Lecture'), pagination(), getLectures);
+lectureRouter.get('/:id/attendances', sorting('Attendance'), pagination(), getLectureAttendances);
 lectureRouter.post('/', requireTeacher, validateLecture, createLecture);
 lectureRouter.get('/:id', getLecture);
 lectureRouter.put('/:id', requireTeacher, validateLecture, updateLecture);

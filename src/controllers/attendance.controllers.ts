@@ -58,7 +58,9 @@ export async function getAttendance(req: Request<ParamsWithID>, res: APIResponse
 }
 
 export async function updateAttendance(req: Request<ParamsWithID>, res: APIResponse) {
-  res.status(501).json({ status: 'fail', message: 'Route not implemented' });
+  const { present } = await prisma.attendance.findUniqueOrThrow({ where: { id: req.params.id } });
+  const data = await prisma.attendance.update({ where: { id: req.params.id }, data: { present: !present } });
+  res.json({ status: 'success', data });
 }
 
 export async function deleteAttendance(req: Request<ParamsWithID>, res: APIResponse) {
