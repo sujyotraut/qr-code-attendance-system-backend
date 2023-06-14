@@ -93,13 +93,14 @@ export async function loginStudent(req: Request, res: APIResponse) {
 
 export async function registerStudent(req: Request, res: APIResponse) {
   // Get student details from request body
-  const { name, email, username, password, ...studentDetails } = matchedData(req, { locations: ['body'] });
+  const { name, email, gender, username, password, ...studentDetails } = matchedData(req, { locations: ['body'] });
 
   // Create user whose role is `student`
   const { password: _, ...user } = await prisma.user.create({
     data: {
       name,
       email,
+      gender,
       username,
       password,
       role: 'student',

@@ -4,8 +4,8 @@ import { Attendance, Lecture, PrismaClient, Student, Teacher, User } from '@pris
 const prisma = new PrismaClient();
 
 type UserData = Omit<User, 'id'>;
-type StudentData = Omit<Student, 'id' | 'deviceId'> & { name: string; email: string };
-type TeacherData = Omit<Teacher, 'id'> & { name: string; email: string };
+type StudentData = Omit<Student, 'id' | 'deviceId'> & { name: string; email: string; gender: string };
+type TeacherData = Omit<Teacher, 'id'> & { name: string; email: string; gender: string };
 type LectureData = Omit<Lecture, 'id'>;
 type AttendanceData = Omit<Attendance, 'id'>;
 
@@ -15,6 +15,7 @@ type AttendanceData = Omit<Attendance, 'id'>;
     data: {
       name: 'Admin User',
       email: 'admin@attendance.com',
+      gender: 'male',
       username: 'admin',
       password: 'admin',
       role: 'admin',
@@ -24,10 +25,11 @@ type AttendanceData = Omit<Attendance, 'id'>;
   // Create teacher
   await prisma.user.create({
     data: {
-      name: 'Teacher User',
-      email: 'teacher@attendance.com',
-      username: 'teacher',
-      password: 'teacher',
+      name: 'Barckeys',
+      email: 'brackeys@attendance.com',
+      gender: 'male',
+      username: 'brackeys',
+      password: 'brackeys@1234',
       role: 'teacher',
       teacher: { create: {} },
     },
@@ -35,10 +37,11 @@ type AttendanceData = Omit<Attendance, 'id'>;
 
   await prisma.user.create({
     data: {
-      name: 'Prajwal Bhure',
-      email: 'prajwalphure@attendance.com',
-      username: 'prajwal-bhure',
-      password: 'Prajwal@2309',
+      name: 'Dani',
+      email: 'dani@attendance.com',
+      gender: 'male',
+      username: 'dani',
+      password: 'dani@1234',
       role: 'teacher',
       teacher: { create: {} },
     },
@@ -46,10 +49,11 @@ type AttendanceData = Omit<Attendance, 'id'>;
 
   await prisma.user.create({
     data: {
-      name: 'Parag Barye',
-      email: 'paragbarye@attendance.com',
-      username: 'parag-barye',
-      password: 'Parag@1307',
+      name: 'Aditya R.',
+      email: 'aditya@attendance.com',
+      gender: 'male',
+      username: 'aditya',
+      password: 'aditya@1234',
       role: 'teacher',
       teacher: { create: {} },
     },
@@ -73,14 +77,18 @@ async function createUsers(noOfUsers: number) {
 async function createUserWithRandomData() {
   const roles = ['admin', 'student', 'teacher'];
 
-  const name = faker.name.fullName();
-  const email = faker.internet.email();
+  const gender = faker.name.sexType();
+  const firstName = faker.name.firstName(gender);
+  const lastName = faker.name.lastName(gender);
+  // const name = faker.name.fullName({ sex: gender });
+  const name = `${firstName} ${lastName}`;
+  const email = faker.internet.email(firstName, lastName, 'gmail.com');
   const username = faker.internet.userName();
   const password = faker.internet.password();
   // const role = roles[Math.floor(Math.random() * roles.length)];
   const role = roles[0];
 
-  return await createUserFromData({ name, email, username, password, role });
+  return await createUserFromData({ name, email, gender, username, password, role });
 }
 
 async function createUserFromData(data: UserData) {
@@ -113,17 +121,34 @@ async function createStudents() {
 
         for (let index = 1; index <= studentsCount; index++) {
           const dateOfBirth = faker.date.birthdate({ min: 21, max: 25, mode: 'age' }).toISOString().split('T')[0];
-          const firstName = faker.name.firstName();
-          const lastname = faker.name.lastName();
-          const name = `${firstName} ${lastname}`;
-          const email = faker.internet.email(firstName, lastname);
+          const gender = faker.name.sexType();
+          const firstName = faker.name.firstName(gender);
+          const lastName = faker.name.lastName(gender);
+          // const name = faker.name.fullName({ sex: gender });
+          const name = `${firstName} ${lastName}`;
+          const email = faker.internet.email(firstName, lastName, 'gmail.com');
+          // const firstName = faker.name.firstName();
+          // const lastname = faker.name.lastName();
+          // const name = `${firstName} ${lastname}`;
+          // const email = faker.internet.email(firstName, lastname);
           const rollNo = `${index}`;
           const maxIdCount = 9999999;
-          const studentId = `TBE${Math.floor(Math.random() * maxIdCount)
+          const studentId = `EN${Math.floor(Math.random() * maxIdCount)
             .toString()
             .padStart(maxIdCount.toString().length, '0')}`;
 
-          await createStudentFromData({ course, year, semester, branch, rollNo, studentId, name, email, dateOfBirth });
+          await createStudentFromData({
+            course,
+            year,
+            semester,
+            branch,
+            rollNo,
+            studentId,
+            name,
+            email,
+            gender,
+            dateOfBirth,
+          });
         }
       } else {
         for (let index = 2; index <= Math.ceil(semestersCount / 2); index++) {
@@ -133,10 +158,16 @@ async function createStudents() {
 
           for (let index = 1; index <= studentsCount; index++) {
             const dateOfBirth = faker.date.birthdate({ min: 21, max: 25, mode: 'age' }).toISOString().split('T')[0];
-            const firstName = faker.name.firstName();
-            const lastname = faker.name.lastName();
-            const name = `${firstName} ${lastname}`;
-            const email = faker.internet.email(firstName, lastname);
+            // const firstName = faker.name.firstName();
+            // const lastname = faker.name.lastName();
+            // const name = `${firstName} ${lastname}`;
+            // const email = faker.internet.email(firstName, lastname);
+            const gender = faker.name.sexType();
+            const firstName = faker.name.firstName(gender);
+            const lastName = faker.name.lastName(gender);
+            // const name = faker.name.fullName({ sex: gender });
+            const name = `${firstName} ${lastName}`;
+            const email = faker.internet.email(firstName, lastName, 'gmail.com');
             const rollNo = `${index}`;
             const maxIdCount = 9999999;
             const studentId = `TBE${Math.floor(Math.random() * maxIdCount)
@@ -152,6 +183,7 @@ async function createStudents() {
               studentId,
               name,
               email,
+              gender,
               dateOfBirth,
             });
           }
@@ -181,8 +213,9 @@ async function createStudentWithRandomData() {
   const year = Math.ceil(Number(semester) / 2).toString();
   const rollNo = Math.floor(Math.random() * 60).toString();
   const dateOfBirth = faker.date.birthdate({ min: 21, max: 25, mode: 'age' }).toISOString().split('T')[0];
-  const firstName = faker.name.firstName();
-  const lastname = faker.name.lastName();
+  const gender = faker.name.sexType();
+  const firstName = faker.name.firstName(gender);
+  const lastname = faker.name.lastName(gender);
   const name = `${firstName} ${lastname}`;
   const email = faker.internet.email(firstName, lastname);
 
@@ -190,14 +223,26 @@ async function createStudentWithRandomData() {
     .toString()
     .padStart(5)}`;
 
-  return await createStudentFromData({ branch, course, semester, year, rollNo, studentId, name, email, dateOfBirth });
+  return await createStudentFromData({
+    branch,
+    course,
+    semester,
+    year,
+    rollNo,
+    studentId,
+    name,
+    email,
+    gender,
+    dateOfBirth,
+  });
 }
 
-async function createStudentFromData({ name, email, ...data }: StudentData) {
+async function createStudentFromData({ name, email, gender, ...data }: StudentData) {
   const { student } = await prisma.user.create({
     data: {
       name,
       email,
+      gender,
       username: data.studentId,
       password: data.dateOfBirth,
       role: 'student',
@@ -212,11 +257,12 @@ async function createStudentFromData({ name, email, ...data }: StudentData) {
 //#endregion
 
 //#region Teacher
-async function createTeacherFromData({ name, email, ...data }: TeacherData) {
+async function createTeacherFromData({ name, email, gender, ...data }: TeacherData) {
   const { teacher } = await prisma.user.create({
     data: {
       name,
       email,
+      gender,
       username: email,
       password: `${name.split('s')[0]}@1234`,
       role: 'student',
